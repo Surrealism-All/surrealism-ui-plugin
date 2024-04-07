@@ -14,7 +14,7 @@ you can directly install in VSCode Plugin
 
 ### 2. set download src
 
-![src](./README/src.png)
+![](https://github.com/Surrealism-All/surrealism-ui-plugin/blob/main/README/src.png)
 
 add download src (where you wanna store your project)
 

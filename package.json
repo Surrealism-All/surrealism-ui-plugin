@@ -4,7 +4,7 @@
   "description": "surrealism-ui plugin for slint",
   "publisher": "SurrealismUI",
   "version": "0.0.1",
-  "icon": "./media/surrealism_128.png",
+  "icon": "media/surrealism_128.png",
   "engines": {
     "vscode": "^1.85.0"
   },

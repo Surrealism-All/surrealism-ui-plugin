@@ -62,7 +62,7 @@ class InfoView implements vscode.WebviewViewProvider {
       <body>
         <div class="surrealism-info-wrapper">
           <img
-            src="https://img.shields.io/badge/SurrealismUI-0.3.5-orange?style=flat-square&logo=rust&logoColor=%23fff&labelColor=%23DEA584&color=%23DEA584"
+            src="https://img.shields.io/badge/SurrealismUI-0.4.1-orange?style=flat-square&logo=rust&logoColor=%23fff&labelColor=%23DEA584&color=%23DEA584"
           />
           <img
             src="https://img.shields.io/badge/License-MIT-orange?style=flat-square&logoColor=%23fff&labelColor=%2323B898&color=%2323B898"
@@ -76,8 +76,8 @@ class InfoView implements vscode.WebviewViewProvider {
                 author: <span class="surrealism_info">syf20020816@outlook.com</span>
               </li>
               <li>createDate: <span class="surrealism_info">20230908</span></li>
-              <li>updateDate: <span class="surrealism_info">20230203</span></li>
-              <li>version: <span class="surrealism_info">0.3.5</span></li>
+              <li>discord: <a class="surrealism_info" href="https://discord.gg/KSQqrSMCnU">Discord</a></li>
+              <li>book: <a class="surrealism_info" href="https://surrealism-all.github.io/SurrealismUI.github.io/">SurrealismUI Book</a></li>
               <li>
                 email: <span class="surrealism_info">syf20020816@outlook.com</span>
               </li>

@@ -1,2 +1,2 @@
 export * from './readme';
-export * from './info';
+export * from './release';

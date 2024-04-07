@@ -2,6 +2,8 @@ import axios from "axios";
 import { TreeItem, window } from "vscode";
 import { Dict, RECOMMENDS } from "./dict";
 import type { ReleaseData, ShowInfo } from "./dict";
+import path from "path";
+import fs from "fs";
 // import {InfoView} from './views';
 
 /**
@@ -44,9 +46,27 @@ const getInfos = (datas: ReleaseData[]): ShowInfo => {
 };
 
 
-// if (selected === '下载') {
-//     vscode.env.openExternal(vscode.Uri.parse(downloadUrl)); // 打开浏览器下载
-// }
+async function downloadRelease(version: string, src: string) {
+  const baseURL =
+    "https://github.com/Surrealism-All/surrealism-ui-template/releases/download";
+  try {
+    const response = await axios({
+      method: "get",
+      url: `${baseURL}/${version}/${version}.zip`,
+      responseType: "stream",
+    });
+    const savePath = path.join(src, `${version}.zip`);
+    const writer = fs.createWriteStream(savePath);
+    response.data.pipe(writer);
+    return new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    });
+  } catch (e) {
+    console.error(`Download failed: ${e}`);
+    throw e;
+  }
+}
 
 
 class ViewProvider{
@@ -60,4 +80,4 @@ class ViewProvider{
     }
 }
 
-export { getReleases,ViewProvider };
+export { getReleases,ViewProvider,downloadRelease };

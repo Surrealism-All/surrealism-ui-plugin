@@ -150,9 +150,7 @@ enum Dict {
  * Recommend tags for SurrealismUI
  */
 const RECOMMENDS:string[] = [
-    "v0.3.5",
-    "v0.2.2",
-    "v0.1.7"
+    "v0.4.0",
 ];
 
 

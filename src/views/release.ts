@@ -1,11 +1,14 @@
 import * as vscode from "vscode";
-import { getReleases } from "../core";
+import { downloadRelease, getReleases } from "../core";
 import { Dict, ShowInfo } from "../dict";
 
 class ReleasesView implements vscode.WebviewViewProvider {
-  public static readonly viewType = "surrealism-ui-readme";
+  public static readonly viewType = "surrealism-ui-releases";
 
-  constructor(private readonly _extensionUrl: vscode.Uri) {}
+  constructor(
+    private readonly _extensionUrl: vscode.Uri,
+    private readonly _context: vscode.ExtensionContext
+  ) {}
 
   resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -17,17 +20,25 @@ class ReleasesView implements vscode.WebviewViewProvider {
       localResourceRoots: [vscode.Uri.joinPath(this._extensionUrl, "media")],
     };
     getReleases().then((res: ShowInfo | undefined) => {
-      
       webviewView.webview.html =
         typeof res !== "undefined"
           ? this._getHtml(res)
           : Dict.UNDEFINED_RESPONSE;
-      
     });
-    
+    webviewView.webview.onDidReceiveMessage(
+      async (message) => {
+        if (message.command === "downloadRelease") {
+          const version = message.version;
+          const src = message.src;
+          // 假设downloadRelease已正确导入
+          await downloadRelease(version, src);
+          // 可能还需要给Webview发送消息以更新UI
+        }
+      },
+      undefined,
+      this._context.subscriptions
+    );
   }
-
-    
 
   private _getHtml(info: ShowInfo): string {
     const latestTag = info.choose;
@@ -45,6 +56,7 @@ class ReleasesView implements vscode.WebviewViewProvider {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <style>
           li {
             list-style: none;
@@ -66,7 +78,7 @@ class ReleasesView implements vscode.WebviewViewProvider {
             flex-wrap: wrap;
           }
           .releases-tag {
-            margin: 4px 6px;
+            margin: 0 6px;
             background: linear-gradient(
               120deg,
               #f55fe9 0%,
@@ -79,22 +91,51 @@ class ReleasesView implements vscode.WebviewViewProvider {
             font-size: 12px;
             color: #fff;
             font-weight: 700;
+            margin:8px 6px;
+          }
+          
+          #downloadUrl{
+            width: 100%;
+            height: 1.5em;
+            font-size: 14px;
+            outline: none;
+            border-width: 0 0 2px 0;
+            border-color: #c961e8;
+            color: #b962ec;
+            font-weight: 700;
+            background-color: transparent;
+            margin: 6px 0;
+          }
+          #downloadBtn{
+            border: none;
+            background: linear-gradient(
+              120deg,
+              #f55fe9 0%,
+              #c961e8 60%,
+              #b962ec 100%
+            );
+            height: auto;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            border-radius: 6px;
+            padding: 0.25em 0.75em;
+            cursor: pointer;
           }
         </style>
       </head>
       <body>
         <div class="surrealism-releases-wrapper">
           <div>
+            <input type="text" name="" id="downloadUrl">
+          </div>
+          <div>
             <span class="surrealism-releases-title"
               >The Latest Release Version:</span
             >
-            <div class="surrealism-releases-details-wrapper">
+            <div class="surrealism-releases-details-wrapper latest">
               <span class="releases-tag">${latestTag}</span>
             </div>
-          </div>
-          <div>
-            <span class="surrealism-releases-title">Recommend releases:</span>
-            <div class="surrealism-releases-details-wrapper">${recommendTags}</div>
           </div>
           <div>
             <span class="surrealism-releases-title">All releases:</span>
@@ -102,6 +143,21 @@ class ReleasesView implements vscode.WebviewViewProvider {
           </div>
         </div>
       </body>
+      <script>
+      const vscode = acquireVsCodeApi();
+    
+      document.querySelectorAll('.latest').forEach(div => {
+        div.addEventListener('click', function() {
+          const version = this.innerText.trim(); 
+          // setDownloadUrl(version);
+          vscode.postMessage({
+            command: 'downloadRelease',
+            version: version,
+            src: document.getElementById('downloadUrl').value
+          })
+        });
+      });
+    </script>
     </html>
     `;
   }
